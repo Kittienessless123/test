@@ -17,6 +17,22 @@
       }
 
   }
+   public bool AuthenticateUser(NetworkCredential credential)
+ {
+     bool ValidUser;
+     using (var connection = GetConnection())
+     using (var command = new SqlCommand())
+     {
+         connection.Open();
+         command.Connection = connection;
+         command.CommandText = "select * from [dbo].[users] where [login_users] = @Login and [password_users] = @Password";
+         command.Parameters.Add("@Login", System.Data.SqlDbType.NVarChar).Value = credential.UserName;
+         command.Parameters.Add("@Password", System.Data.SqlDbType.NVarChar).Value = credential.Password;
+
+         ValidUser = command.ExecuteScalar() == null ? false : true;
+     }
+     return ValidUser;
+ }
   public void AuthencticateUser(string login, string password)
   {
       string Role = "";
@@ -60,6 +76,23 @@
 
   }
 
+  public DataTable GetAllWarehouses()
+{
+    DataTable dt = new DataTable();
+    using (var connection = GetConnection())
+    using (var command = new SqlCommand())
+    {
+        connection.Open();
+        command.Connection = connection;
+        command.CommandText = "select * from [dbo].[warehouses]";
+        using (SqlDataAdapter sda = new SqlDataAdapter(command))
+        {
+            sda.Fill(dt);
+        }
+    }
+    return dt;
+}
+
   private void CreateUser_Click(object sender, RoutedEventArgs e)
 {
     try
@@ -97,3 +130,17 @@
  dataAdp.Fill(dt);
  UserList.ItemsSource = dt.DefaultView;
  connection.Close();
+WindowStartupLocation="CenterScreen"
+        Closing="Window_Сlosing"
+alter table product 
+add product_name varchar(max) not null default 'одежда';
+
+--Вывод всех товаров с сортировкой по возрастанию рейтинга (от худшего к лучшему);
+SELECT * FROM product ORDER BY rating ASC
+SELECT * FROM product WHERE  product_name LIKE '%носки%'; 
+select * from product inner join sailor on product.id_sailor=sailor.id_sailor where sailor_name='Stylecraft'; 
+
+insert into sailor (sailor_name, juridical, e_mail, phone_number, adress) values 
+('111','111','111','111','111'),
+
+        
